@@ -1,13 +1,14 @@
 import os
 
+from ray import tune
+
 import sastvd as svd
 import sastvd.linevd.run as lvdrun
-from ray import tune
 
 os.environ["SLURM_JOB_NAME"] = "bash"
 
 config = {
-    "hfeat": tune.choice([512]),
+    "hfeat": tune.choice([32]),
     "embtype": tune.choice(["codebert"]),
     "stmtweight": tune.choice([1, 5, 10]),
     "hdropout": tune.choice([0.25, 0.3]),
@@ -43,7 +44,7 @@ trainable = tune.with_parameters(lvdrun.train_linevd, samplesz=samplesz, savepat
 
 analysis = tune.run(
     trainable,
-    resources_per_trial={"cpu": 1, "gpu": 1},
+    resources_per_trial={"cpu": 1, "gpu": 0},
     metric="val_loss",
     mode="min",
     config=config,
@@ -52,4 +53,5 @@ analysis = tune.run(
     local_dir=sp,
     keep_checkpoints_num=2,
     checkpoint_score_attr="min-val_loss",
+    resume="AUTO",
 )

@@ -1,9 +1,10 @@
 import pytorch_lightning as pl
-import sastvd.linevd as lvd
 from ray.tune.integration.pytorch_lightning import (
     TuneReportCallback,
     TuneReportCheckpointCallback,
 )
+
+import sastvd.linevd as lvd
 
 
 def train_linevd(
@@ -44,7 +45,7 @@ def train_linevd(
     raytune_callback = TuneReportCallback(metrics, on="validation_end")
     rtckpt_callback = TuneReportCheckpointCallback(metrics, on="validation_end")
     trainer = pl.Trainer(
-        gpus=1,
+        gpus=0,
         auto_lr_find=False,
         default_root_dir=savepath,
         num_sanity_val_steps=0,
@@ -52,3 +53,7 @@ def train_linevd(
         max_epochs=max_epochs,
     )
     trainer.fit(model, data)
+
+
+if __name__ == "__main__":
+    train_linevd

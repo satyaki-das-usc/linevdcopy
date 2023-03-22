@@ -45,5 +45,5 @@ fi
 if [[ -z "${p}" ]]; then
     usage
 else
-    python3 -u "${p}" "${a[@]}"
+    PYTHONPATH="." python "${p}" "${a[@]}"
 fi

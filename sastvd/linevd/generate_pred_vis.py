@@ -2,15 +2,16 @@ from glob import glob
 
 import pandas as pd
 import pytorch_lightning as pl
+import torch as th
+from ray.tune import ExperimentAnalysis
+from tqdm import tqdm
+
 import sastvd as svd
 import sastvd.helpers.datasets as svdd
 import sastvd.helpers.dclass as svddc
 import sastvd.helpers.hljs as hljs
 import sastvd.helpers.rank_eval as svdhr
 import sastvd.linevd as lvd
-import torch as th
-from ray.tune import Analysis
-from tqdm import tqdm
 
 
 def preds(model, datapartition, vid):
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     # Load full dataframe
     df_list = []
     for d in tune_dirs:
-        df_list.append(Analysis(d).dataframe())
+        df_list.append(ExperimentAnalysis(d).dataframe())
     df = pd.concat(df_list)
     df = df[df["config/splits"] == "default"]
 

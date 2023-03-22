@@ -2,12 +2,13 @@ import os
 import re
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
+
 import sastvd as svd
 import sastvd.helpers.doc2vec as svdd2v
 import sastvd.helpers.git as svdg
 import sastvd.helpers.glove as svdglove
 import sastvd.helpers.tokenise as svdt
-from sklearn.model_selection import train_test_split
 
 
 def train_val_test_split_df(df, idcol, labelcol):
@@ -180,7 +181,7 @@ def bigvul(minimal=True, sample=False, return_raw=False, splits="default"):
     # POST PROCESSING
     dfv = df[df.vul == 1]
     # No added or removed but vulnerable
-    dfv = dfv[~dfv.apply(lambda x: len(x.added) == 0 and len(x.removed) == 0, axis=1)]
+    dfv = dfv[dfv.apply(lambda x: len(x.added) == 0 and len(x.removed) == 0, axis=1)]
     # Remove functions with abnormal ending (no } or ;)
     dfv = dfv[
         ~dfv.apply(
@@ -200,7 +201,10 @@ def bigvul(minimal=True, sample=False, return_raw=False, splits="default"):
 
     # Remove samples with mod_prop > 0.5
     dfv["mod_prop"] = dfv.apply(
-        lambda x: len(x.added + x.removed) / len(x["diff"].splitlines()), axis=1
+        lambda x: len(x.added + x.removed) / len(x["diff"].splitlines())
+        if len(x["diff"].splitlines()) != 0
+        else 0,
+        axis=1,
     )
     dfv = dfv.sort_values("mod_prop", ascending=0)
     dfv = dfv[dfv.mod_prop < 0.7]
