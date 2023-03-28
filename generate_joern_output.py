@@ -4,7 +4,7 @@ from multiprocessing import Manager, Pool, Queue, cpu_count
 
 import pandas as pd
 from ray import tune
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 
 import sastvd as svd
 import sastvd.helpers.joern as svdj
