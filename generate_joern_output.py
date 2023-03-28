@@ -1,5 +1,6 @@
 import functools
 import os
+from argparse import ArgumentParser
 from multiprocessing import Manager, Pool, Queue, cpu_count
 
 import pandas as pd
@@ -19,7 +20,24 @@ def process_joern_parallel(joern_input, queue: Queue):
     return iid
 
 
+def parse_args():
+    parser = ArgumentParser()
+    parser.add_argument(
+        "--limit",
+        default=None,
+        type=int,
+        required=False,
+        help="The input training data file (a csv file).",
+    )
+
+    args, unknown = parser.parse_known_args()
+
+    return args
+
+
 if __name__ == "__main__":
+    args = parse_args()
+
     savedir = svd.get_dir(svd.cache_dir() / "minimal_datasets")
     df = pd.read_parquet(
         savedir / f"minimal_bigvul_False.pq", engine="fastparquet"
@@ -28,6 +46,11 @@ if __name__ == "__main__":
     funcs = df["before"].tolist()
     datasets = df["dataset"].tolist()
     iids = df["id"].tolist()
+
+    if args.limit:
+        funcs = funcs[: args.limit]
+        datasets = datasets[: args.limit]
+        iids = iids[: args.limit]
 
     func_cnt = len(funcs)
 
