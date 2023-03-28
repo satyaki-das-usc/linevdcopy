@@ -108,7 +108,7 @@ def subprocess_cmd(command: str, verbose: int = 0, force_shell: bool = False):
     >>> b
     """
     singularity = os.getenv("SINGULARITY")
-    if singularity != "true" and not force_shell:
+    if singularity and not force_shell:
         command = f"singularity exec {project_dir() / 'main.sif'} " + command
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True

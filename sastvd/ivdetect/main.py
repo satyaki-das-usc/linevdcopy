@@ -5,16 +5,17 @@ import pickle as pkl
 from importlib import reload
 
 import dgl
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from dgl.dataloading import GraphDataLoader
+
 import sastvd as svd
 import sastvd.helpers.ml as ml
 import sastvd.helpers.rank_eval as svdr
 import sastvd.ivdetect.evaluate as ivde
 import sastvd.ivdetect.gnnexplainer as ge
 import sastvd.ivdetect.helpers as ivd
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from dgl.dataloading import GraphDataLoader
 
 # Load data
 reload(ivd)
